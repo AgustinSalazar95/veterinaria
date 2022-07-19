@@ -6,6 +6,9 @@ import veterinarioRoutes from './routes/veterinarioRoutes.js';
 //instanciamos express
 const app = express();
 
+//para poder ller los datos de la api
+app.use(express.json());
+
 //para acceder y leer la variabla de .env
 dotenv.config();
 
