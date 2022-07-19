@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import generarId from "../helpers/generarId.js";
 
 //El esquema condificones de la base de datos
 const veterinarioSchema = mongoose.Schema({
@@ -28,6 +29,7 @@ const veterinarioSchema = mongoose.Schema({
     },
     token: {
         type: String,
+        default: generarId()
     },
     confirmado: {
         type: Boolean,
