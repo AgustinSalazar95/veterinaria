@@ -1,5 +1,5 @@
 import Veterinario from '../models/Veterinario.js';
-
+import generarJWT from '../helpers/generarJWT.js';
 
 //endpoints
 const registrar = async (req,res) => {
@@ -27,8 +27,9 @@ const registrar = async (req,res) => {
     
 }
 
-const perfil = (req,res) => {
-    res.json({msg: 'Mostrando Perfil'});
+const perfil =  (req,res) => {
+    const {veterinario}  =  req;
+    res.json({perfil: veterinario });
 }
 
 const confirmar = async (req,res) => {
@@ -50,8 +51,39 @@ const confirmar = async (req,res) => {
     }  
 }
 
+const autenticar = async (req, res) => {
+    const { email, password } =  req.body;
+    //Comprobar si el usuario existe
+    const usuario =  await Veterinario.findOne({email});
+    if(!usuario){
+        const error =  new Error('El Usuario no Existe');
+        return res.status(404).json({msg: error.message});
+    }
+
+    //Comprobar si el Usuario esta Confirmado
+    if(!usuario.confirmado){
+        const error =  new Error('Tu Cuenta no ha sido Confirmada');
+        return res.status(403).json({msg: error.message});
+    }
+
+    //Revisar el password
+    if(await usuario.comprobarPassword(password)){
+        //Autenticar
+        res.json({token:  generarJWT(usuario.id)}) 
+    } else {
+        const error =  new Error('Password Incorrecto');
+        return res.status(403).json({msg: error.message});
+    }
+}
+
+const olvidePassword = (req,res) => {
+    console.log('desde ovlide pass')
+}
+
 export {
     registrar,
     perfil,
-    confirmar
+    confirmar,
+    autenticar,
+    olvidePassword
 }
