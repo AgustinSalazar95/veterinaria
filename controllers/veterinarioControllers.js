@@ -1,5 +1,6 @@
 import Veterinario from '../models/Veterinario.js';
 import generarJWT from '../helpers/generarJWT.js';
+import generarId from '../helpers/generarId.js';
 
 //endpoints
 const registrar = async (req,res) => {
@@ -76,8 +77,57 @@ const autenticar = async (req, res) => {
     }
 }
 
-const olvidePassword = (req,res) => {
-    console.log('desde ovlide pass')
+const olvidePassword = async (req,res) => {
+    const { email } =  req.body;
+    
+    const existeVeterinario = await Veterinario.findOne({email});
+    if(!existeVeterinario){
+        const error = new Error('El Usuario No Existe');
+        return res.status(400).json({msg : error.message});
+    }
+
+    try {
+        existeVeterinario.token = generarId();
+        await existeVeterinario.save();
+        res.json({msg: 'Hemos enviado un email con las instrucciones'});
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const comprobarToken = async (req,res) => {
+    const {token} = req.params;
+
+    const tokenValido = await Veterinario.findOne({ token });
+    if(tokenValido){
+        //el token es valido el usuario existe 
+        res.json({msg : 'Token Valido'})
+    }else {
+        const error = new Error('Token no valido');
+        return res.status(400).json({ msg: error.message});
+    }
+}
+const nuevoPassword = (req,res) => {
+    //viene de la URL
+    const {token} =  req.params;
+    //es lo qel usuario escriba
+    const {password} = req.body;
+
+    const veterinario = await Veterinario.findOne({token})
+
+    if(!veterinario){
+        const error = new Error('Hubo un error');
+        return res.status(400).json({ msg: error.message});
+    }
+
+    try {
+        veterinario.token = null
+        veterinario.password = password;
+        await veterinario.save();
+        res.json({msg: 'Password modificado Correctamente'});
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 export {
@@ -85,5 +135,7 @@ export {
     perfil,
     confirmar,
     autenticar,
-    olvidePassword
+    olvidePassword,
+    comprobarToken,
+    nuevoPassword
 }
