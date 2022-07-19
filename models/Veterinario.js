@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from 'bcrypt';
 import generarId from "../helpers/generarId.js";
 
 //El esquema condificones de la base de datos
@@ -36,6 +37,17 @@ const veterinarioSchema = mongoose.Schema({
         default: false
     }
 });
+
+
+//Antes de almacenar el registro HASHEAMOS el pass
+veterinarioSchema.pre('save', async function(next) {
+    //Para cuando lo modifique aasi no vuelve  apasar hassehado
+    if(!this.isModified('password')){
+        next();
+    }
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+})
 
 //Para registralo en moongose
 const Veterinario = mongoose.model('Veterinario', veterinarioSchema);

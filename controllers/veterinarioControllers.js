@@ -47,9 +47,7 @@ const confirmar = async (req,res) => {
         res.json({msg: 'Usuario Confirmado Correctamente'});
     } catch (error) {
         console.log(error);
-    }
-
-    
+    }  
 }
 
 export {
