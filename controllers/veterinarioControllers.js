@@ -107,7 +107,7 @@ const comprobarToken = async (req,res) => {
         return res.status(400).json({ msg: error.message});
     }
 }
-const nuevoPassword = (req,res) => {
+const nuevoPassword = async  (req,res) => {
     //viene de la URL
     const {token} =  req.params;
     //es lo qel usuario escriba
