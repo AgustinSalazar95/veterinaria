@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Alerta from './Alerta';
+import usePacientes from "../hooks/usePacientes";
+
 
 
 const Formulario = () => {
@@ -7,10 +9,13 @@ const Formulario = () => {
     const [nombre, setNombre] = useState('');
     const [propietario, setPropietario] = useState('');
     const [email, setEmail] = useState('');
-    const [fecha, setFecha] = useState(Date.now());
+    const [fecha, setFecha] = useState('');
     const [sintomas, setSintomas] = useState('');
 
     const [alerta, setAlerta] = useState({});
+
+    const { guardarPaciente } = usePacientes();
+
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -23,6 +28,9 @@ const Formulario = () => {
             });
             return;
         }
+
+        setAlerta({});
+        guardarPaciente({nombre, propietario, email, fecha, sintomas});
     }
 
     const { msg } = alerta
