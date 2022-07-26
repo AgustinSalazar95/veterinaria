@@ -13,7 +13,7 @@ const pacientesSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    fehca: {
+    fecha: {
         type: Date,
         required: true,
         default: Date.now(),
